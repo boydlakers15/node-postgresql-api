@@ -35,3 +35,14 @@ app.get('/users/:id/orders', async (req, res) => {
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
+
+app.post('/users', async (req, res) => {
+  const { firstName, lastName, age } = req.body;
+  try {
+    const { rows } = await pool.query('INSERT INTO users (first_name, last_name, age) VALUES ($1, $2, $3) RETURNING *', [firstName, lastName, age]);
+    res.json(rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
